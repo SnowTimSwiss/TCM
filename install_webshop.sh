@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# Webshop Installation Script
-# Beschreibung: Automatisiert die Einrichtung der Entwicklungsumgebung für den Webshop
+# Webshop Installation Script - für einfaches deployen des TCM - Shops
 # =============================================================================
 
 # Farbdefinitionen für bessere Lesbarkeit
@@ -40,8 +39,8 @@ print_step() {
 
 echo -e "${GREEN}"
 echo "╔══════════════════════════════════════════════╗"
-echo "║           Webshop Installer                 ║"
-echo "║         Entwicklungsumgebung                ║"
+echo "║           Webshop Installer                  ║"
+echo "║              TCM - Shop                      ║"
 echo "╚══════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
@@ -186,8 +185,9 @@ fi
 # ---------- SERVER STARTEN ----------
 echo -e "\n${GREEN}"
 echo "╔══════════════════════════════════════════════╗"
-echo "║              Webshop Backend                ║"
-echo "║               Startet jetzt                 ║"
+echo "║              Webshop Backend                 ║"
+echo "║               Startet jetzt                  ║"
+echo "║   Shop verfügbar auf http://localhost:5000   ║"
 echo "╚══════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
