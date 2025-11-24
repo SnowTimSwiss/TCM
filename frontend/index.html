@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Tims Unterhosen - Login / Register</title>
+<title>TCM Shop - Login / Register</title>
 <style>
-  body { margin:0; font-family:sans-serif; background:#0f1720; color:#e6eef6; display:flex; justify-content:center; align-items:center; height:100vh; }
-  .card { background:#111827; padding:30px 40px; border-radius:12px; width:350px; box-shadow:0 6px 18px rgba(0,0,0,0.7); }
+  body { margin:0; font-family:sans-serif; background:#0f1720; color:#e6eef6; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
+  .card { background:#111827; padding:30px 40px; border-radius:12px; width:350px; box-shadow:0 6px 18px rgba(0,0,0,0.7); position:relative; z-index:1; }
   h1 { text-align:center; margin-bottom:20px; }
   h2 { margin-bottom:10px; font-size:1.2rem; color:#60a5fa; }
   input { width:100%; padding:10px; margin:6px 0; border:none; border-radius:6px; background:#07101a; color:#e6eef6; }
@@ -15,11 +15,25 @@
   a { color:#60a5fa; cursor:pointer; text-decoration:none; }
   a:hover { text-decoration:underline; }
   #status { margin-top:10px; text-align:center; color:#f87171; font-size:0.9rem; }
+
+  /* Startanimation */
+  #intro { 
+    position:absolute; top:0; left:0; width:100%; height:100%; 
+    display:flex; justify-content:center; align-items:center; 
+    background:#0f1720; z-index:2; color:#60a5fa; font-size:5rem; font-weight:bold; 
+    animation: fadeOut 2s ease forwards 1.5s; 
+  }
+  @keyframes fadeOut {
+    0% { opacity:1; transform: scale(1); }
+    100% { opacity:0; transform: scale(1.5); display:none; }
+  }
 </style>
 </head>
 <body>
+  <div id="intro">TCM</div>
+
   <div class="card">
-    <h1>Tim's Unterhosen</h1>
+    <h1>TCM Shop</h1>
 
     <div id="login-form">
       <h2>Anmelden</h2>
