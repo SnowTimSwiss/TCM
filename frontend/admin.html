@@ -5,15 +5,88 @@
   <title>Admin - Demo Webshop</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="/static/styles.css" />
+
+  <!-- Minimaler Zusatzstyle für schöneres UI -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #005fcc;
+    }
+
+    #admin-status {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      color: #333;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
 </head>
+
 <body>
   <main class="card">
-    <h1>Admin: Produkte hinzufügen</h1>
-    <input id="p-name" placeholder="Name" />
+    <h1>Produkt hinzufügen</h1>
+
+    <input id="p-name" placeholder="Produktname" />
     <input id="p-desc" placeholder="Beschreibung" />
     <input id="p-price" placeholder="Preis in Euro (z.B. 12.99)" />
     <input id="p-stock" placeholder="Lagerbestand" />
+
     <button id="btn-add">Hinzufügen</button>
+
     <div id="admin-status"></div>
   </main>
 
@@ -25,14 +98,19 @@
       const price = parseFloat(document.getElementById('p-price').value || "0");
       const stock = parseInt(document.getElementById('p-stock').value || "0");
       const price_cents = Math.round(price * 100);
+
       const res = await fetch('/api/admin/product', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({name, description: desc, price_cents, stock})
+        body: JSON.stringify({ name, description: desc, price_cents, stock })
       });
+
       const j = await res.json();
-      document.getElementById('admin-status').innerText = JSON.stringify(j);
+      const status = document.getElementById('admin-status');
+      status.innerText = JSON.stringify(j, null, 2);
+      status.style.display = "block";
     }
   </script>
+
 </body>
 </html>
