@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin - Demo Webshop</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Admin: Produkte hinzufügen</h1>
+    <input id="p-name" placeholder="Name" />
+    <input id="p-desc" placeholder="Beschreibung" />
+    <input id="p-price" placeholder="Preis in Euro (z.B. 12.99)" />
+    <input id="p-stock" placeholder="Lagerbestand" />
+    <button id="btn-add">Hinzufügen</button>
+    <div id="admin-status"></div>
+  </main>
+
+  <script src="/static/js/api.js"></script>
+  <script>
+    document.getElementById('btn-add').onclick = async () => {
+      const name = document.getElementById('p-name').value;
+      const desc = document.getElementById('p-desc').value;
+      const price = parseFloat(document.getElementById('p-price').value || "0");
+      const stock = parseInt(document.getElementById('p-stock').value || "0");
+      const price_cents = Math.round(price * 100);
+      const res = await fetch('/api/admin/product', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({name, description: desc, price_cents, stock})
+      });
+      const j = await res.json();
+      document.getElementById('admin-status').innerText = JSON.stringify(j);
+    }
+  </script>
+</body>
+</html>

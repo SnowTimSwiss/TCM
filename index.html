@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Demo Webshop - Login / Register</title>
+<style>
+  body { margin:0; font-family:sans-serif; background:#0f1720; color:#e6eef6; display:flex; justify-content:center; align-items:center; height:100vh; }
+  .card { background:#111827; padding:30px 40px; border-radius:12px; width:350px; box-shadow:0 6px 18px rgba(0,0,0,0.7); }
+  h1 { text-align:center; margin-bottom:20px; }
+  h2 { margin-bottom:10px; font-size:1.2rem; color:#60a5fa; }
+  input { width:100%; padding:10px; margin:6px 0; border:none; border-radius:6px; background:#07101a; color:#e6eef6; }
+  button { width:100%; padding:10px; border:none; border-radius:6px; background:#60a5fa; color:#042035; font-weight:bold; cursor:pointer; margin-top:8px; }
+  button:hover { background:#3b82f6; }
+  a { color:#60a5fa; cursor:pointer; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  #status { margin-top:10px; text-align:center; color:#f87171; font-size:0.9rem; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Demo Webshop</h1>
+
+    <div id="login-form">
+      <h2>Anmelden</h2>
+      <input id="login-email" type="email" placeholder="Email">
+      <input id="login-password" type="password" placeholder="Passwort">
+      <button id="btn-login">Anmelden</button>
+      <p style="text-align:center;">Noch kein Konto? <a id="show-register">Registrieren</a></p>
+    </div>
+
+    <div id="register-form" style="display:none;">
+      <h2>Registrieren</h2>
+      <input id="reg-email" type="email" placeholder="Email">
+      <input id="reg-password" type="password" placeholder="Passwort">
+      <input id="reg-fullname" placeholder="Vorname Nachname">
+      <input id="reg-address" placeholder="Adresse">
+      <input id="reg-city" placeholder="Stadt">
+      <input id="reg-postal" placeholder="PLZ">
+      <button id="btn-register">Registrieren</button>
+      <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/auth.js"></script>
+</body>
+</html>
