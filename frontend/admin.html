@@ -1,83 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <title>Admin - Demo Webshop</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="/static/styles.css" />
-
-  <!-- Minimaler Zusatzstyle für schöneres UI -->
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f5f6fa;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.08);
-      width: 100%;
-      max-width: 420px;
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-    input:focus {
-      outline: none;
-      border-color: #007bff;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #007bff;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #005fcc;
-    }
-
-    #admin-status {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-      color: #333;
-      background: #f0f0f0;
-      padding: 10px;
-      border-radius: 8px;
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin - Produkt hinzufügen</title>
+<style>
+  body { margin:0; font-family:sans-serif; background:#0f1720; color:#e6eef6; display:flex; justify-content:center; align-items:center; height:100vh; }
+  .card { background:#111827; padding:30px 40px; border-radius:12px; width:350px; box-shadow:0 6px 18px rgba(0,0,0,0.7); }
+  h1 { text-align:center; margin-bottom:20px; font-size:1.4rem; color:#60a5fa; }
+  input { width:100%; padding:10px; margin:6px 0; border:none; border-radius:6px; background:#07101a; color:#e6eef6; }
+  button { width:100%; padding:10px; border:none; border-radius:6px; background:#60a5fa; color:#042035; font-weight:bold; cursor:pointer; margin-top:8px; }
+  button:hover { background:#3b82f6; }
+  #admin-status { margin-top:15px; font-size:0.9rem; white-space:pre-wrap; background:#07101a; padding:10px; border-radius:6px; display:none; color:#fca5a5; }
+</style>
 </head>
 
 <body>
-  <main class="card">
+  <div class="card">
     <h1>Produkt hinzufügen</h1>
 
     <input id="p-name" placeholder="Produktname" />
@@ -88,7 +27,7 @@
     <button id="btn-add">Hinzufügen</button>
 
     <div id="admin-status"></div>
-  </main>
+  </div>
 
   <script src="/static/js/api.js"></script>
   <script>
