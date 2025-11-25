@@ -243,7 +243,7 @@ def api_admin_add_product():
     db.commit()
     return jsonify({"ok": True, "product_id": cur.lastrowid})
 
-# Admin: delete product
+# Admin: delete product (Lösung 3 - mit Prüfung auf Bestellungen)
 @app.route("/api/admin/product/<int:product_id>", methods=["DELETE"])
 def api_admin_delete_product(product_id):
     u = current_user()
@@ -257,6 +257,18 @@ def api_admin_delete_product(product_id):
     p = query_db("SELECT id FROM products WHERE id = ?", (product_id,), one=True)
     if not p:
         return jsonify({"error": "Produkt nicht gefunden"}), 404
+    
+    # Check if product is in any orders
+    order_count = query_db(
+        "SELECT COUNT(*) as count FROM order_items WHERE product_id = ?", 
+        (product_id,), one=True
+    )["count"]
+    
+    if order_count > 0:
+        return jsonify({
+            "error": f"Produkt kann nicht gelöscht werden, da es in {order_count} Bestellung(en) enthalten ist",
+            "order_count": order_count
+        }), 400
     
     # Delete the product
     cur.execute("DELETE FROM products WHERE id = ?", (product_id,))
