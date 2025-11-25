@@ -255,63 +255,42 @@
         showStatus('Netzwerkfehler: ' + error, 'error');
       }
     };
+// Lagerbestand erhöhen
+async function addStock(productId) {
+  const stockInput = document.getElementById(`stock-${productId}`);
+  const addAmount = parseInt(stockInput.value || "0");
+  
+  if (addAmount <= 0) {
+    showStatus('Bitte eine gültige Menge eingeben', 'error');
+    return;
+  }
 
-    // Lagerbestand erhöhen
-    async function addStock(productId) {
-      const stockInput = document.getElementById(`stock-${productId}`);
-      const addAmount = parseInt(stockInput.value || "0");
-      
-      if (addAmount <= 0) {
-        showStatus('Bitte eine gültige Menge eingeben', 'error');
-        return;
-      }
+  try {
+    await adminUpdateStock(productId, addAmount);
+    showStatus(`Lagerbestand um ${addAmount} erhöht!`, 'success');
+    stockInput.value = '1';
+    await loadProducts();
+  } catch (error) {
+    showStatus('Fehler: ' + (error.error || error.message || 'Unbekannter Fehler'), 'error');
+  }
+}
 
-      try {
-        const res = await fetch(`/api/admin/product/${productId}/stock`, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ change: addAmount })
-        });
+// Produkt löschen
+async function deleteProduct(productId) {
+  if (!confirm('Möchtest du dieses Produkt wirklich löschen?')) {
+    return;
+  }
 
-        const result = await res.json();
-        
-        if (res.ok) {
-          showStatus(`Lagerbestand um ${addAmount} erhöht!`, 'success');
-          stockInput.value = '1';
-          await loadProducts();
-        } else {
-          showStatus('Fehler: ' + (result.error || 'Unbekannter Fehler'), 'error');
-        }
-      } catch (error) {
-        showStatus('Netzwerkfehler: ' + error, 'error');
-      }
-    }
-
-    // Produkt löschen
-    async function deleteProduct(productId) {
-      if (!confirm('Möchtest du dieses Produkt wirklich löschen?')) {
-        return;
-      }
-
-      try {
-        const res = await fetch(`/api/admin/product/${productId}`, {
-          method: 'DELETE'
-        });
-
-        const result = await res.json();
-        
-        if (res.ok) {
-          showStatus('Produkt erfolgreich gelöscht!', 'success');
-          await loadProducts();
-        } else {
-          showStatus('Fehler: ' + (result.error || 'Unbekannter Fehler'), 'error');
-        }
-      } catch (error) {
-        showStatus('Netzwerkfehler: ' + error, 'error');
-      }
-    }
-
-    // Statusmeldung anzeigen
+  try {
+    await adminDeleteProduct(productId);
+    showStatus('Produkt erfolgreich gelöscht!', 'success');
+    await loadProducts();
+  } catch (error) {
+    showStatus('Fehler: ' + (error.error || error.message || 'Unbekannter Fehler'), 'error');
+  }
+}
+    
+     // Statusmeldung anzeigen
     function showStatus(message, type) {
       const status = document.getElementById('admin-status');
       status.innerText = message;
@@ -328,3 +307,4 @@
   </script>
 </body>
 </html>
+
