@@ -1,4 +1,4 @@
-// Kleiner API-Helper
+// Robuster API-Helper
 async function api(path, opts = {}) {
   opts.headers = opts.headers || {};
   if (!opts.headers['Content-Type']) {
@@ -9,7 +9,16 @@ async function api(path, opts = {}) {
     }
   }
   const res = await fetch(path, opts);
-  const data = await res.json().catch(()=>({}));
+  
+  let data;
+  try {
+    const text = await res.text();
+    data = text ? JSON.parse(text) : {};
+  } catch (e) {
+    // If JSON parsing fails, create a simple response object
+    data = { success: res.ok, status: res.status };
+  }
+  
   if (!res.ok) {
     throw data;
   }
