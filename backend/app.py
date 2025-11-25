@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Ein einfaches Flask-Backend für den Schul-Webshop.
-Unterstützt: Registrierung, Login (Session), Produkte abrufen, Bestellung speichern.
-Bei Aufruf mit --init-db: erstellt die SQLite DB und fügt Beispielprodukte ein.
-"""
 
 import os
 import sqlite3
@@ -247,6 +242,55 @@ def api_admin_add_product():
                 (name,desc,price_cents,stock))
     db.commit()
     return jsonify({"ok": True, "product_id": cur.lastrowid})
+
+# Admin: delete product
+@app.route("/api/admin/product/<int:product_id>", methods=["DELETE"])
+def api_admin_delete_product(product_id):
+    u = current_user()
+    if not u or u.get("is_admin") != 1:
+        return jsonify({"error": "Nicht autorisiert"}), 403
+    
+    db = get_db()
+    cur = db.cursor()
+    
+    # Check if product exists
+    p = query_db("SELECT id FROM products WHERE id = ?", (product_id,), one=True)
+    if not p:
+        return jsonify({"error": "Produkt nicht gefunden"}), 404
+    
+    # Delete the product
+    cur.execute("DELETE FROM products WHERE id = ?", (product_id,))
+    db.commit()
+    
+    return jsonify({"ok": True, "message": "Produkt gelöscht"})
+
+# Admin: update product stock
+@app.route("/api/admin/product/<int:product_id>/stock", methods=["POST"])
+def api_admin_update_stock(product_id):
+    u = current_user()
+    if not u or u.get("is_admin") != 1:
+        return jsonify({"error": "Nicht autorisiert"}), 403
+    
+    data = request.json or {}
+    change = int(data.get("change", 0))
+    
+    if change <= 0:
+        return jsonify({"error": "Änderung muss positiv sein"}), 400
+    
+    db = get_db()
+    cur = db.cursor()
+    
+    # Check if product exists
+    p = query_db("SELECT id, stock FROM products WHERE id = ?", (product_id,), one=True)
+    if not p:
+        return jsonify({"error": "Produkt nicht gefunden"}), 404
+    
+    # Update stock
+    new_stock = p["stock"] + change
+    cur.execute("UPDATE products SET stock = ? WHERE id = ?", (new_stock, product_id))
+    db.commit()
+    
+    return jsonify({"ok": True, "new_stock": new_stock})
 
 # Static assets fallback (for JS/CSS)
 @app.route("/static/<path:filename>")
