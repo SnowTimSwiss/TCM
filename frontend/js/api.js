@@ -15,3 +15,24 @@ async function api(path, opts = {}) {
   }
   return data;
 }
+
+// Erweiterte Admin-Funktionen
+async function adminAddProduct(productData) {
+  return await api('/api/admin/product', {
+    method: 'POST',
+    body: productData
+  });
+}
+
+async function adminUpdateStock(productId, change) {
+  return await api(`/api/admin/product/${productId}/stock`, {
+    method: 'POST',
+    body: { change }
+  });
+}
+
+async function adminDeleteProduct(productId) {
+  return await api(`/api/admin/product/${productId}`, {
+    method: 'DELETE'
+  });
+}
