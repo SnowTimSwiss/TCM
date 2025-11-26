@@ -45,3 +45,8 @@ async function adminDeleteProduct(productId) {
     method: 'DELETE'
   });
 }
+
+// Bestellungen abrufen
+async function adminGetOrders() {
+  return await api('/api/admin/orders');
+}
