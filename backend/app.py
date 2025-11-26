@@ -3,7 +3,7 @@
 import os
 import sqlite3
 import argparse
-from flask import Flask, request, session, g, jsonify, send_from_directory, redirect, url_for
+from flask import Flask, request, session, g, jsonify, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
@@ -74,12 +74,6 @@ def seed_db(db):
         print("Created admin user: admin@example.com / admin123")
     db.commit()
 
-# --- CLI for initializing DB ---
-def cli_initdb():
-    with app.app_context():
-        init_db(with_seed=True)
-        print("DB initialisiert unter:", app.config["DATABASE"])
-
 # --- Auth helper ---
 def current_user():
     uid = session.get("user_id")
@@ -99,7 +93,6 @@ def index():
 
 @app.route("/shop")
 def shop_page():
-    # Protect on frontend but allow direct static file; we also provide an endpoint to check auth.
     return send_from_directory(app.static_folder, "shop.html")
 
 @app.route("/admin")
@@ -243,7 +236,7 @@ def api_admin_add_product():
     db.commit()
     return jsonify({"ok": True, "product_id": cur.lastrowid})
 
-# Admin: delete product (Lösung 3 - mit Prüfung auf Bestellungen)
+# Admin: delete product
 @app.route("/api/admin/product/<int:product_id>", methods=["DELETE"])
 def api_admin_delete_product(product_id):
     u = current_user()
@@ -304,10 +297,44 @@ def api_admin_update_stock(product_id):
     
     return jsonify({"ok": True, "new_stock": new_stock})
 
-# Static assets fallback (for JS/CSS)
+# --- NEU: Admin: Get all orders ---
+@app.route("/api/admin/orders")
+def api_admin_orders():
+    u = current_user()
+    if not u or u.get("is_admin") != 1:
+        return jsonify({"error": "Nicht autorisiert"}), 403
+
+    db = get_db()
+    
+    # 1. Alle Bestellungen mit User-Infos holen (JOIN)
+    # Wir holen auch Adresse etc. aus der users Tabelle
+    query = """
+        SELECT o.id, o.total_cents, o.created_at,
+               u.fullname, u.email, u.address, u.city, u.postalcode
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        ORDER BY o.created_at DESC
+    """
+    rows = query_db(query)
+    orders = [dict(r) for r in rows]
+
+    # 2. Für jede Bestellung die Artikel holen
+    # LEFT JOIN falls Produkt gelöscht wäre (optional, da wir Löschen verhindern)
+    for order in orders:
+        items_query = """
+            SELECT p.name, oi.qty, oi.price_cents
+            FROM order_items oi
+            LEFT JOIN products p ON oi.product_id = p.id
+            WHERE oi.order_id = ?
+        """
+        items_rows = query_db(items_query, (order["id"],))
+        order["items"] = [dict(i) for i in items_rows]
+
+    return jsonify({"orders": orders})
+
+# Static assets fallback
 @app.route("/static/<path:filename>")
 def static_files(filename):
-    # Serve files from frontend directory (../frontend/js etc.)
     frontend_root = os.path.join(os.path.dirname(BASE_DIR), "frontend")
     return send_from_directory(frontend_root, filename)
 
