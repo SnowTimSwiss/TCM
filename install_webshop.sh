@@ -191,12 +191,7 @@ echo "║   Shop verfügbar auf http://localhost:5000   ║"
 echo "╚══════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
-print_status "Server URL: http://localhost:5000"
-print_status "API Documentation: http://localhost:5000/api/docs"
-echo ""
 print_warning "Drücken Sie Ctrl+C um den Server zu stoppen"
 echo ""
 
-# Starte den Flask Development Server
-print_status "Starte Flask Development Server..."
 python3 backend/app.py
