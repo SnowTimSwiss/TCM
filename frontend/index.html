@@ -27,8 +27,16 @@
     z-index:1;
   }
 
-  h1 { text-align:center; margin-bottom:20px; }
-  h2 { margin-bottom:10px; font-size:1.2rem; color:#60a5fa; }
+  h1 { 
+    text-align:center; 
+    margin-bottom:20px; 
+  }
+
+  h2 { 
+    margin-bottom:10px; 
+    font-size:1.1rem; 
+    color:#60a5fa; 
+  }
 
   input {
     width:100%;
@@ -38,6 +46,12 @@
     border-radius:6px;
     background:#07101a;
     color:#e6eef6;
+  }
+
+  /* Kompaktere Inputs für Registrieren */
+  #register-form input {
+    padding:8px;
+    margin:4px 0;
   }
 
   button {
@@ -54,13 +68,12 @@
 
   button:hover { background:#3b82f6; }
 
-  a { color:#60a5fa; cursor:pointer; text-decoration:none; }
-  a:hover { text-decoration:underline; }
-
-  /* Korrektur: Größe des "Registrieren"-Links anpassen */
-  #show-register, #show-login {
-    font-size: 0.9rem;
+  a { 
+    color:#60a5fa; 
+    cursor:pointer; 
+    text-decoration:none; 
   }
+  a:hover { text-decoration:underline; }
 
   #status {
     margin-top:10px;
@@ -82,8 +95,6 @@
     color:#60a5fa;
     font-size:5rem;
     font-weight:bold;
-
-    /* Animation */
     animation: fadeOut 2s ease forwards 1.5s;
   }
 
@@ -96,7 +107,7 @@
     100% {
       opacity:0;
       transform: scale(1.5);
-      visibility:hidden; /* <- verhindert Klick-Blockade */
+      visibility:hidden;
     }
   }
 </style>
@@ -138,7 +149,7 @@
 setTimeout(() => {
     const intro = document.getElementById("intro");
     if (intro) intro.style.display = "none";
-}, 3500); // 1.5s delay + 2s animation
+}, 3500);
 </script>
 
 </body>
