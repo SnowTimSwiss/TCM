@@ -129,12 +129,15 @@
 
     <div id="register-form" style="display:none;">
       <h2 style="text-align: center;">Registrieren</h2>
-      <input id="reg-email" type="email" placeholder="Email">
+      <!-- Email syntax prüfen -->
+      <input id="reg-email" type="email" placeholder="Email"
+      required
+      pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
       <input id="reg-password" type="password" placeholder="Passwort">
       <input id="reg-fullname" placeholder="Vorname Nachname">
       <input id="reg-address" placeholder="Adresse">
       <input id="reg-city" placeholder="Stadt">
-      <input id="reg-postal" placeholder="PLZ">
+      <input id="reg-postal" pattern="^[0-9]{4}$" placeholder="PLZ">
       <button id="btn-register">Registrieren</button>
       <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
     </div>
