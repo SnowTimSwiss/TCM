@@ -6,6 +6,9 @@ TCM/
 ├── backend/            # API, Logik, Datenverarbeitung
 ├── frontend/           # Webshop‑Oberfläche
 |└──js/                 # Javascript
+| └── api.js
+| └── shop.js
+| └── auth.js
 ├── install_webshop.sh  # Automatisches Installationsskript
 └── README.md
 ```
