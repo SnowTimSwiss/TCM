@@ -126,22 +126,20 @@
       <button id="btn-login">Anmelden</button>
       <p style="text-align:center;">Noch kein Konto? <a id="show-register">Registrieren</a></p>
     </div>
-
-    <div id="register-form" style="display:none;">
+    <form id="register-form" style="display:none;">
       <h2 style="text-align: center;">Registrieren</h2>
       <!-- Email syntax prüfen -->
       <input id="reg-email" type="email" placeholder="Email"
       required
       pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
-      <input id="reg-password" type="password" placeholder="Passwort">
-      <input id="reg-fullname" placeholder="Vorname Nachname">
-      <input id="reg-address" placeholder="Adresse">
-      <input id="reg-city" placeholder="Stadt">
-      <input id="reg-postal" pattern="^[0-9]{4}$" placeholder="PLZ">
-      <button id="btn-register">Registrieren</button>
+      <input id="reg-password" type="password" placeholder="Passwort" required>
+      <input id="reg-fullname" placeholder="Vorname Nachname" required>
+      <input id="reg-address" placeholder="Adresse" required>
+      <input id="reg-city" placeholder="Stadt" required>
+      <input id="reg-postal" pattern="^[0-9]{4}$" placeholder="PLZ" required>
+      <button type="submit">Registrieren</button>
       <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
-    </div>
-
+    </form>
     <div id="status"></div>
   </div>
 
