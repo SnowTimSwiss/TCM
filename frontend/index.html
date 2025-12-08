@@ -119,19 +119,18 @@
   <div class="card">
     <h1>PiDrive - Elektromobile</h1>
 
-    <div id="login-form">
+    <form id="login-form">
      <h2 style="text-align: center;">Anmelden</h2>
-      <input id="login-email" type="email" placeholder="Email">
-      <input id="login-password" type="password" placeholder="Passwort">
-      <button id="btn-login">Anmelden</button>
+      <input id="login-email" type="email" placeholder="Email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
+      <input id="login-password" type="password" placeholder="Passwort" required>
+      <button type="submit">Anmelden</button>
       <p style="text-align:center;">Noch kein Konto? <a id="show-register">Registrieren</a></p>
-    </div>
+    </form>
+
     <form id="register-form" style="display:none;" action="/shop" method="get">
       <h2 style="text-align: center;">Registrieren</h2>
-      <!-- Email syntax prüfen -->
       <input id="reg-email" type="email" placeholder="Email"
-      required
-      pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
+      required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
       <input id="reg-password" type="password" placeholder="Passwort" required>
       <input id="reg-fullname" placeholder="Vorname Nachname" required>
       <input id="reg-address" placeholder="Adresse" required>
@@ -140,17 +139,32 @@
       <button type="submit">Registrieren</button>
       <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
     </form>
+
     <div id="status"></div>
   </div>
 
 <script src="/static/js/api.js"></script>
 <script src="/static/js/auth.js"></script>
-
 <script>
 setTimeout(() => {
     const intro = document.getElementById("intro");
     if (intro) intro.style.display = "none";
 }, 3500);
+
+// Formularwechsel Login <-> Register
+const showRegister = document.getElementById('show-register');
+const showLogin = document.getElementById('show-login');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+
+if (showRegister) showRegister.addEventListener('click', () => {
+  loginForm.style.display = 'none';
+  registerForm.style.display = 'block';
+});
+if (showLogin) showLogin.addEventListener('click', () => {
+  registerForm.style.display = 'none';
+  loginForm.style.display = 'block';
+});
 </script>
 
 </body>
