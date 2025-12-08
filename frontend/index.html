@@ -119,58 +119,38 @@
   <div class="card">
     <h1>PiDrive - Elektromobile</h1>
 
-    <form id="login-form" action="/shop" method="get">
+    <div id="login-form">
      <h2 style="text-align: center;">Anmelden</h2>
-      <input id="login-email" type="email" placeholder="Email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
-      <input id="login-password" type="password" placeholder="Passwort" required>
-      <button type="submit">Anmelden</button>
+      <input id="login-email" type="email" placeholder="Email">
+      <input id="login-password" type="password" placeholder="Passwort">
+      <button id="btn-login">Anmelden</button>
       <p style="text-align:center;">Noch kein Konto? <a id="show-register">Registrieren</a></p>
-    </form>
+    </div>
 
-    <form id="register-form" style="display:none;" action="/shop" method="get">
+    <div id="register-form" style="display:none;">
       <h2 style="text-align: center;">Registrieren</h2>
-      <input id="reg-email" type="email" placeholder="Email"
-      required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
-      <input id="reg-password" type="password" placeholder="Passwort" required>
-      <input id="reg-fullname" placeholder="Vorname Nachname" required>
-      <input id="reg-address" placeholder="Adresse" required>
-      <input id="reg-city" placeholder="Stadt" required>
-      <input id="reg-postal" pattern="^[0-9]{4}$" placeholder="PLZ" required>
-      <button type="submit">Registrieren</button>
+      <input id="reg-email" type="email" placeholder="Email">
+      <input id="reg-password" type="password" placeholder="Passwort">
+      <input id="reg-fullname" placeholder="Vorname Nachname">
+      <input id="reg-address" placeholder="Adresse">
+      <input id="reg-city" placeholder="Stadt">
+      <input id="reg-postal" placeholder="PLZ">
+      <button id="btn-register">Registrieren</button>
       <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
-    </form>
+    </div>
 
     <div id="status"></div>
   </div>
 
 <script src="/static/js/api.js"></script>
 <script src="/static/js/auth.js"></script>
+
 <script>
 setTimeout(() => {
     const intro = document.getElementById("intro");
     if (intro) intro.style.display = "none";
 }, 3500);
-
-// Formularwechsel Login <-> Register
-const showRegister = document.getElementById('show-register');
-const showLogin = document.getElementById('show-login');
-const loginForm = document.getElementById('login-form');
-const registerForm = document.getElementById('register-form');
-
-if (showRegister) showRegister.addEventListener('click', () => {
-  loginForm.style.display = 'none';
-  registerForm.style.display = 'block';
-});
-if (showLogin) showLogin.addEventListener('click', () => {
-  registerForm.style.display = 'none';
-  loginForm.style.display = 'block';
-});
 </script>
 
 </body>
-<footer>
-  <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">
-    &copy; 2025 TCM / Power innovation Drive - Elektromobile. Alle Rechte vorbehalten.
-  </p>
-</footer>
 </html>
