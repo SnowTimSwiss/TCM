@@ -84,9 +84,8 @@
   #status {
     margin-top:10px;
     text-align:center;
-    color:#f87171;
-    font-size:0.9rem;
     min-height: 1.2em;
+    font-size:0.9rem;
   }
 
   /* Startanimation */
@@ -114,9 +113,7 @@
     100% {
       opacity:0;
       transform: scale(1.5);
-      /* Das Element bleibt auf 'visible', aber opacity 0 
-         und wird später per JS entfernt, um Klicks zu verhindern */
-      visibility:visible; 
+      visibility:visible;
     }
   }
 </style>
@@ -136,19 +133,19 @@
       <p style="text-align:center;">Noch kein Konto? <a id="show-register">Registrieren</a></p>
     </div>
 
-    <form id="register-form" style="display:none;">
+    <div id="register-form" style="display:none;">
       <h2 style="text-align: center;">Registrieren</h2>
-      <input id="reg-email" type="email" placeholder="Email" required>
-      <input id="reg-password" type="password" placeholder="Passwort" required>
+      <input id="reg-email" type="email" placeholder="Email" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Bitte gültige E-Mail eingeben">
+      <input id="reg-password" type="password" placeholder="Passwort" required minlength="6">
       <input id="reg-fullname" type="text" placeholder="Vorname Nachname" required>
-      <input id="reg-address" type="text" placeholder="Adresse" required>
+      <input id="reg-address" type="text" placeholder="Strasse und Hausnummer" required>
       <input id="reg-city" type="text" placeholder="Stadt" required>
       
-      <input id="reg-postal" type="text" inputmode="numeric" maxlength="4" pattern="^\d{4}$" placeholder="PLZ (4-stellig)" required>
+      <input id="reg-postal" type="text" inputmode="numeric" maxlength="4" pattern="^\d{4}$" placeholder="PLZ (4-stellig)" required title="Bitte 4-stellige PLZ eingeben">
       
-      <button type="submit" id="btn-register">Registrieren</button>
+      <button id="btn-register">Registrieren</button>
       <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
-    </form>
+    </div>
 
     <div id="status"></div>
   </div>
@@ -158,11 +155,8 @@
 
 <script>
     // --- Initialer Fix für die Animation ---
-    // Die Animation ist von 0s bis 3.5s aktiv (fadeOut 2s, startet nach 1.5s).
-    // Wir verstecken das Intro-Element zuverlässig nach Ende der Animation.
     setTimeout(() => {
         const intro = document.getElementById("intro");
-        // Nur verstecken, wenn es existiert, um Fehler zu vermeiden
         if (intro) {
              intro.style.display = "none";
         }
@@ -170,17 +164,21 @@
 
     // --- Umschalt-Logik (UI) ---
     const loginForm = document.getElementById('login-form');
-    // Wichtig: Register Form ist jetzt ein <form>-Element
-    const registerForm = document.getElementById('register-form'); 
+    const registerForm = document.getElementById('register-form');
     const showRegister = document.getElementById('show-register');
     const showLogin = document.getElementById('show-login');
     const statusDiv = document.getElementById('status');
 
     showRegister.addEventListener('click', (e) => {
-        e.preventDefault(); // Verhindert ggf. Seitensprünge
+        e.preventDefault();
         loginForm.style.display = 'none';
         registerForm.style.display = 'block';
         statusDiv.innerText = '';
+        
+        // Fehler-Klassen entfernen
+        document.querySelectorAll('#register-form input').forEach(input => {
+            input.classList.remove('error');
+        });
     });
 
     showLogin.addEventListener('click', (e) => {
@@ -188,55 +186,6 @@
         registerForm.style.display = 'none';
         loginForm.style.display = 'block';
         statusDiv.innerText = '';
-    });
-
-    // --- VALIDIERUNGSLOGIK ---
-    
-    // Die Registrierungslogik wird an das Submit-Ereignis des Formulars gebunden,
-    // da wir es zu einem <form>-Tag gemacht haben.
-    registerForm.addEventListener('submit', function(e) {
-        // Standard-Formular-Aktion (z.B. Neuladen der Seite) verhindern
-        e.preventDefault(); 
-        
-        const emailInput = document.getElementById('reg-email');
-        const postalInput = document.getElementById('reg-postal');
-        
-        const email = emailInput.value.trim();
-        const postal = postalInput.value.trim();
-        
-        // Fehler zurücksetzen
-        statusDiv.innerText = "";
-        statusDiv.style.color = "#f87171";
-        emailInput.classList.remove('error');
-        postalInput.classList.remove('error');
-
-        // Die HTML5 'required' Attribute kümmern sich bereits um leere Felder.
-        // Wir brauchen nur noch die spezifische Logik (Email/PLZ Format).
-
-        // 1. Email Validierung (Regex)
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            statusDiv.innerText = "Bitte eine gültige E-Mail Adresse eingeben.";
-            emailInput.classList.add('error');
-            return; 
-        }
-
-        // 2. PLZ Validierung (Exakt 4 Ziffern)
-        const postalRegex = /^\d{4}$/;
-        if (!postalRegex.test(postal)) {
-            // Dies ist meist nur nötig, wenn der Browser 'pattern' ignoriert, 
-            // dient aber als zuverlässiger Fallback.
-            statusDiv.innerText = "Die PLZ muss eine 4-stellige Zahl sein.";
-            postalInput.classList.add('error');
-            return;
-        }
-
-        // Wenn wir hier ankommen, ist alles gültig!
-        statusDiv.style.color = "#4ade80"; // Grün für Erfolg
-        statusDiv.innerText = "Validierung erfolgreich! Sende Daten...";
-        
-        // HIER würde der Aufruf an die externe auth.js oder die API erfolgen.
-        console.log("Registrierung gestartet für:", email);
     });
 </script>
 
