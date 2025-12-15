@@ -5,208 +5,208 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TCM - Shop</title>
 <style>
-  /* Grundlayout */
-  body {
-    margin:0;
-    font-family:sans-serif;
-    background:#0f1720;
-    color:#e6eef6;
-  }
+    /* ======================================
+    CSS-STYLES: Darstellung und Layout
+    ====================================== 
+    */
 
-  /* Header */
-  header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 32px;
-    background:#111827;
-    box-shadow:0 2px 6px rgba(0,0,0,0.5);
-  }
-  header h1 {
-    margin:0;
-    font-size:1.5rem;
-    color:#60a5fa;
-  }
-  header button {
-    padding:8px 16px;
-    border:none;
-    border-radius:8px;
-    background:#60a5fa;
-    color:#042035;
-    cursor:pointer;
-    font-weight:500;
-    transition:0.2s;
-  }
-  header button:hover {
-    background:#3b82f6;
-  }
+  /* Grundlayout (Body) */
+  body {
+    margin:0; /* Entfernt den Standard-Margin des Browsers */
+    font-family:sans-serif;
+    background:#0f1720; /* Dunkler Hintergrund (fast schwarz-blau) */
+    color:#e6eef6; /* Helle Textfarbe */
+  }
 
-  /* Hauptbereich */
-  main {
-    display:flex;
-    flex-wrap:wrap;
-    gap:24px;
-    padding:24px;
-    justify-content:center;
-  }
+  /* Header-Bereich */
+  header {
+    display:flex; /* Aktiviert Flexbox für Ausrichtung */
+    justify-content:space-between; /* Verteilt Elemente an den Enden (Titel links, Button rechts) */
+    align-items:center; /* Vertikale Zentrierung */
+    padding:16px 32px;
+    background:#111827; /* Noch dunklerer Hintergrund für den Header */
+    box-shadow:0 2px 6px rgba(0,0,0,0.5); /* Leichter Schatten nach unten */
+  }
+  header h1 {
+    margin:0;
+    font-size:1.5rem;
+    color:#60a5fa; /* Blauer Akzent für den Titel */
+  }
+  header button {
+    padding:8px 16px;
+    border:none;
+    border-radius:8px;
+    background:#60a5fa; /* Blauer Button-Hintergrund */
+    color:#042035; /* Dunkle Schriftfarbe für Kontrast */
+    cursor:pointer;
+    font-weight:500;
+    transition:0.2s; /* Sanfter Übergang für :hover */
+  }
+  header button:hover {
+    background:#3b82f6; /* Dunklerer Blauton beim Hover */
+  }
 
-  /* Produktliste */
-  #products {
-    display:flex;
-    flex-wrap:wrap;
-    gap:24px;
-    flex:1;
-    justify-content:flex-start;
-  }
-  .product {
-    background:#111827;
-    padding:16px;
-    border-radius:12px;
-    width:220px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.6);
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    transition:0.2s;
-  }
-  .product:hover {
-    transform:translateY(-4px);
-    box-shadow:0 10px 25px rgba(0,0,0,0.7);
-  }
-  .product h3 {
-    margin:0 0 6px 0;
-    color:#60a5fa;
-    font-size:1.1rem;
-  }
-  .product p {
-    margin:2px 0;
-    font-size:0.9rem;
-    color:#cbd5e1;
-  }
+  /* Hauptbereich (Main) */
+  main {
+    display:flex; /* Haupt-Container verwendet Flexbox */
+    flex-wrap:wrap; /* Erlaubt Zeilenumbruch auf kleinen Bildschirmen */
+    gap:24px; /* Abstand zwischen den Haupt-Containern (Produkten und Warenkorb) */
+    padding:24px;
+    justify-content:center; /* Zentriert den Inhalt horizontal */
+  }
 
-  /* Input & Buttons in Produkten */
-  input[type=number] {
-    width:60px;
-    padding:4px 6px;
-    border-radius:6px;
-    border:none;
-    background:#07101a;
-    color:#e6eef6;
-    text-align:center;
-  }
-  button.add-to-cart {
-    margin-top:8px;
-    padding:8px;
-    background:#154a38;
-    color:#042035;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:500;
-    transition:0.2s;
-  }
-  button.add-to-cart:hover {
-    background:#059669;
-  }
+  /* Produktliste (Container) */
+  #products {
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    flex:1; /* Nimmt den größten Teil des verfügbaren Platzes ein */
+    justify-content:flex-start; /* Produkte starten links */
+  }
+  
+  /* Einzelnes Produkt-Card-Design */
+  .product {
+    background:#111827;
+    padding:16px;
+    border-radius:12px;
+    width:220px; /* Feste Breite für Produkt-Karten */
+    box-shadow:0 6px 20px rgba(0,0,0,0.6);
+    display:flex;
+    flex-direction:column; /* Elemente in der Karte vertikal stapeln */
+    justify-content:space-between; /* Sorgt dafür, dass der "In den Warenkorb"-Button unten ist */
+    transition:0.2s;
+  }
+  .product:hover {
+    transform:translateY(-4px); /* Hebt die Karte leicht an */
+    box-shadow:0 10px 25px rgba(0,0,0,0.7); /* Stärkerer Schatten beim Hover */
+  }
+  .product h3 {
+    margin:0 0 6px 0;
+    color:#60a5fa;
+    font-size:1.1rem;
+  }
+  .product p {
+    margin:2px 0;
+    font-size:0.9rem;
+    color:#cbd5e1;
+  }
 
-  /* Warenkorb */
-  #cart {
-    background:#111827;
-    padding:20px;
-    border-radius:12px;
-    width:260px;
-    min-height:220px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.5);
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-  }
-  #cart h2 {
-    color:#60a5fa;
-    margin-top:0;
-    margin-bottom:12px;
-  }
-  #cart-items div {
-    margin-bottom:8px;
-    font-size:0.95rem;
-  }
-  #cart-total {
-    font-weight:bold;
-    margin-top:12px;
-    font-size:1rem;
-  }
+  /* Input & Buttons in Produkten */
+  input[type=number] {
+    width:60px;
+    padding:4px 6px;
+    border-radius:6px;
+    border:none;
+    background:#07101a;
+    color:#e6eef6;
+    text-align:center;
+  }
+  button.add-to-cart {
+    margin-top:8px;
+    padding:8px;
+    background:#154a38; /* Grüner Ton (Kauf-Aktion) */
+    color:#042035;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:500;
+    transition:0.2s;
+  }
+  button.add-to-cart:hover {
+    background:#059669; /* Hellerer Grünton beim Hover */
+  }
 
+  /* Warenkorb (Aside) */
+  #cart {
+    background:#111827;
+    padding:20px;
+    border-radius:12px;
+    width:260px; /* Feste Breite für den Warenkorb */
+    min-height:220px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.5);
+    display:flex;
+    flex-direction:column; /* Elemente vertikal stapeln */
+    justify-content:flex-start;
+  }
+  #cart h2 {
+    color:#60a5fa;
+    margin-top:0;
+    margin-bottom:12px;
+  }
+  #cart-items div {
+    margin-bottom:8px;
+    font-size:0.95rem;
+  }
+  #cart-total {
+    font-weight:bold;
+    margin-top:12px;
+    font-size:1rem;
+  }
+
+/* Bestell-Button */
 #btn-order {
-    margin-top:12px;
-    width:100%;
-    padding:8px;
-    background:#60a5fa;
-    color:#042035;
-    border-radius:8px;
-    border:2px solid #3b82f6;
-    cursor:pointer;
-    font-weight:500;
-    transition:0.2s;
+    margin-top:12px;
+    width:100%;
+    padding:8px;
+    background:#60a5fa;
+    color:#042035;
+    border-radius:8px;
+    border:2px solid #3b82f6; /* Auffälliger blauer Rand */
+    cursor:pointer;
+    font-weight:500;
+    transition:0.2s;
 }
 #btn-order:hover {
-    background:#3b82f6;
-    border-color:#2563eb;
+    background:#3b82f6;
+    border-color:#2563eb;
 }
 /* Footer */
 .footer {
-  text-align: center;
-  color: #888;
-  font-size: 1rem;
-  margin: 4px 0;
-  line-height: 1.2;
+  text-align: center;
+  color: #888;
+  font-size: 1rem;
+  margin: 4px 0;
+  line-height: 1.2;
 }
 .footerspace {
-  margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
-  /* Responsive */
-  @media(max-width:800px) {
-    main {
-      flex-direction:column;
-      align-items:center;
-    }
-    #cart {
-      width:100%;
-      margin-top:16px;
-    }
-  }
+  /* Responsive Design für kleine Bildschirme */
+  @media(max-width:800px) {
+    main {
+      flex-direction:column; /* Auf Mobilgeräten untereinander stapeln */
+      align-items:center;
+    }
+    #cart {
+      width:100%; /* Warenkorb nimmt die volle Breite ein */
+      margin-top:16px;
+    }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>PiDrive - Elektomobile</h1>
-  <button id="btn-logout">Abmelden</button>
-</header>
+  <h1>PiDrive - Elektomobile</h1>     <button id="btn-logout">Abmelden</button> </header>
 
 <main>
-  <div id="products"></div>
-  <aside id="cart">
-    <h2>Warenkorb</h2>
-    <div id="cart-items"></div>
-    <div id="cart-total">Total: 0.00 €</div>
-    <button id="btn-order">Bestellen (Demo)</button>
-  </aside>
+    <div id="products"></div>   
+    <aside id="cart">     <h2>Warenkorb</h2>
+        <div id="cart-items"></div>         <div id="cart-total">Total: 0.00 €</div>         <button id="btn-order">Bestellen (Demo)</button>   </aside>
 </main>
 
 <script src="/static/js/api.js"></script>
 <script src="/static/js/shop.js"></script>
-</body>
+
 <footer>
-  <h2 style="text-align: center; color:#60a5fa; margin-top:40px;">Kontakt</h2>
-  <p class="footer">E-Mail: Kontakt@tcm-shop.com</p>
-  <p class="footer">Telefon: +234 67 911 67 67</p>
-  <p class="footer">TCM-Group</p>
-  <p class="footer">Schwaniweg 67</p>
-  <p class="footer">6767 Steckersee</p>
-  <p class="footer">Nigeria</p>
-  <p class="footerspace"></p>
-  <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">
-    &copy; 2025 TCM / Power innovation Drive - Elektromobile. Alle Rechte vorbehalten.
-  </p>
+  <h2 style="text-align: center; color:#60a5fa; margin-top:40px;">Kontakt</h2>   <p class="footer">E-Mail: Kontakt@tcm-shop.com</p>
+  <p class="footer">Telefon: +234 67 911 67 67</p>
+  <p class="footer">TCM-Group</p>
+  <p class="footer">Schwaniweg 67</p>
+  <p class="footer">6767 Steckersee</p>
+  <p class="footer">Nigeria</p>
+  <p class="footerspace"></p>
+  <p style="text-align:center; color:#888; font-size:0.8rem; margin-top:20px;">
+    &copy; 2025 TCM / Power innovation Drive - Elektromobile. Alle Rechte vorbehalten.   </p>
 </footer>
 </html>
