@@ -1,33 +1,37 @@
 #!/usr/bin/env python3
 
 # Importiert notwendige Standard-Bibliotheken
-import os
-import sqlite3
-import argparse
+import os # Für Pfadoperationen und Zugriff auf Umgebungsvariablen
+import sqlite3 # Die Datenbank-Engine
+import argparse # Für das Parsen von Kommandozeilenargumenten (z.B. --init-db)
 
 # Importiert Flask-Komponenten für den Webserver und Session-Management
 from flask import Flask, request, session, g, jsonify, send_from_directory
 # Importiert Sicherheitsfunktionen zum Hashen und Überprüfen von Passwörtern
 from werkzeug.security import generate_password_hash, check_password_hash
-# Importiert dotenv, um Umgebungsvariablen aus einer .env Datei zu laden
+# Importiert dotenv, um Umgebungsvariablen aus einer .env Datei zu laden (Konfiguration)
 from dotenv import load_dotenv
 
 # --- Konfiguration ---
-# Bestimmt das Basisverzeichnis der aktuellen Datei
+# Bestimmt das Basisverzeichnis der aktuellen Datei, um relative Pfade zu handhaben
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Lädt die .env Datei, falls sie im gleichen Ordner existiert
+# Lädt die .env Datei, falls sie im gleichen Ordner existiert, um Umgebungsvariablen zu setzen
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # Konfigurationsvariablen setzen (mit Standardwerten, falls in .env nicht vorhanden)
+# Datenbank-Dateiname
 DATABASE = os.getenv("DATABASE", "webshop.db")
-SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_for_demo") # Wichtig für Sessions/Cookies
+# Geheimer Schlüssel für Session-Cookies (KRITISCH für die Sicherheit!)
+SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_for_demo") 
+# Debug-Modus (Aktiviert Hot-Reloading und detailliertere Fehlerprotokollierung)
 DEBUG = os.getenv("DEBUG", "1") == "1"
 
 # Initialisiert die Flask-App
-# static_folder verweist auf den Ordner, in dem HTML/CSS/JS Dateien liegen
+# static_folder verweist auf den Ordner, in dem HTML/CSS/JS Dateien liegen (Frontend)
 app = Flask(__name__, static_folder="../frontend", static_url_path="/static")
+# Lädt die Konfiguration in die Flask-App
 app.config["SECRET_KEY"] = SECRET_KEY
-app.config["DATABASE"] = os.path.join(BASE_DIR, DATABASE)
+app.config["DATABASE"] = os.path.join(BASE_DIR, DATABASE) # Absoluter Pfad zur DB
 app.config["DEBUG"] = DEBUG
 
 # --- Datenbank-Hilfsfunktionen ---
@@ -35,21 +39,25 @@ app.config["DEBUG"] = DEBUG
 def get_db():
     """
     Stellt eine Verbindung zur Datenbank her, falls noch keine für die 
-    aktuelle Anfrage (Request) existiert. Speichert sie in 'g' (globaler Kontext).
+    aktuelle Anfrage (Request) existiert. Speichert sie in 'g' (globaler Kontext 
+    spezifisch für den aktuellen Request).
     """
+    # Versucht, die Verbindung aus dem g-Objekt zu holen
     db = getattr(g, "_database", None)
     if db is None:
+        # Wenn keine Verbindung existiert, erstelle eine neue
         db = g._database = sqlite3.connect(app.config["DATABASE"])
         # Row_factory sorgt dafür, dass wir Spalten per Namen ansprechen können (wie ein Dictionary)
         db.row_factory = sqlite3.Row
-        # Aktiviert Foreign-Key-Constraints (wichtig für Datenintegrität)
+        # Aktiviert Foreign-Key-Constraints (wichtig für Datenintegrität und Beziehungen)
         db.execute("PRAGMA foreign_keys = ON;")
     return db
 
 @app.teardown_appcontext
 def close_connection(exception):
     """
-    Schließt die Datenbankverbindung automatisch am Ende jeder Anfrage.
+    Schließt die Datenbankverbindung automatisch am Ende jeder Anfrage, 
+    egal ob ein Fehler aufgetreten ist oder nicht. (Teardown-Funktion)
     """
     db = getattr(g, "_database", None)
     if db is not None:
@@ -57,38 +65,45 @@ def close_connection(exception):
 
 def query_db(query, args=(), one=False):
     """
-    Hilfsfunktion, um SQL-Abfragen einfacher auszuführen.
-    one=True gibt nur einen Eintrag zurück, sonst eine Liste.
+    Hilfsfunktion, um SQL-Abfragen einfacher auszuführen (SELECT).
+    :param query: Die SQL-Abfrage.
+    :param args: Die Argumente/Parameter für die Abfrage (gegen SQL-Injection).
+    :param one: Wenn True, wird nur der erste Eintrag zurückgegeben.
+    :return: Eine Liste von Ergebnissen (Rows) oder ein einzelnes Ergebnis.
     """
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
     cur.close()
+    # Gibt entweder das erste Element, None (wenn Liste leer), oder die ganze Liste zurück
     return (rv[0] if rv else None) if one else rv
 
 def init_db(with_seed=True):
     """
     Initialisiert die Datenbankstruktur.
-    Liest das SQL-Schema aus 'models.sql' und führt es aus.
+    Liest das SQL-Schema aus 'models.sql' und führt es aus, um alle Tabellen zu erstellen.
     """
     sql_path = os.path.join(BASE_DIR, "models.sql")
     with open(sql_path, "r", encoding="utf-8") as f:
         sql = f.read()
     db = get_db()
-    db.executescript(sql)
+    # Führt das gesamte SQL-Skript (CREATE TABLEs) aus
+    db.executescript(sql) 
     if with_seed:
         seed_db(db) # Füllt die DB mit Testdaten
-    db.commit()
+    db.commit() # Speichert alle Änderungen dauerhaft
 
 def seed_db(db):
     """
-    Füllt die Datenbank mit Elektromobil-Produkten und einem Admin-Benutzer,
+    Füllt die Datenbank mit Testprodukten und einem Admin-Benutzer,
     falls diese noch nicht existieren.
     """
     cur = db.cursor()
-    # Prüfen, ob Produkte existieren
+    
+    # --- Produkte seeding ---
+    # Prüfen, ob Produkte existieren, um Doppelungen zu vermeiden
     cur.execute("SELECT COUNT(*) as c FROM products")
     if cur.fetchone()["c"] == 0:
-        # TCM Elektromobile Produkte
+        # TCM Elektromobile Produkte (Testdaten)
         products = [
             # (name, description, price_cents, stock)
             (
@@ -103,6 +118,7 @@ def seed_db(db):
                 18700000,  # 187'000 Euro in Cent
                 8
             ),
+            # ... weitere Produkte ...
             (
                 "Vermeiren Mercurius 4D",
                 "Der erste Wagen, der nicht nur die Strasse, sondern auch die Zeit leicht biegt – und dabei völlig emissionsfrei bleibt.",
@@ -164,50 +180,60 @@ def seed_db(db):
                 7
             ),
         ]
+        # Fügt alle Produkte mit einem einzigen Befehl ein
         cur.executemany("INSERT INTO products (name,description,price_cents,stock) VALUES (?,?,?,?)", products)
         print("TCM Elektromobile Produkte wurden geladen.")
     
-    # Erstellt einen Admin-User (admin@example.com / admin123)
+    # --- Admin-User seeding ---
+    # Prüft, ob der Admin-User bereits existiert
     cur.execute("SELECT COUNT(*) as c FROM users WHERE email = ?", ("admin@example.com",))
     if cur.fetchone()["c"] == 0:
-        pw = generate_password_hash("admin123")
+        # Hashes das Passwort sicher vor dem Speichern in der DB
+        pw = generate_password_hash("admin123") 
+        # Erstellt den Admin-User (is_admin = 1)
         cur.execute("INSERT INTO users (email,password,fullname,is_admin) VALUES (?,?,?,1)", ("admin@example.com", pw, "Admin"))
         print("Created admin user: admin@example.com / admin123")
-    db.commit()
+    
+    db.commit() # Speichert alle Seed-Daten
 
 # --- Authentifizierungs-Hilfsfunktionen ---
 
 def current_user():
     """
-    Holt den aktuell eingeloggten Benutzer basierend auf der Session-ID.
-    Gibt None zurück, wenn niemand eingeloggt ist.
+    Holt den aktuell eingeloggten Benutzer basierend auf der user_id aus der Session.
+    Gibt ein Benutzer-Dictionary mit wichtigen Feldern zurück, 
+    aber NICHT das gehashte Passwort.
     """
-    uid = session.get("user_id")
+    uid = session.get("user_id") # Holt die User-ID aus der verschlüsselten Session
     if not uid:
         return None
+    # Holt alle notwendigen User-Daten außer dem Passwort
     row = query_db("SELECT id,email,fullname,is_admin,address,city,postalcode FROM users WHERE id = ?", (uid,), one=True)
-    return dict(row) if row else None
+    return dict(row) if row else None # Konvertiert die Row in ein Python-Dictionary
 
 def login_user(user_id):
     """
     Loggt einen Benutzer ein, indem die user_id in der verschlüsselten Session gespeichert wird.
     """
-    session.clear()
+    session.clear() # Leert die aktuelle Session (gute Praxis vor dem Login)
     session["user_id"] = user_id
 
 # --- Routen: Frontend (liefert HTML-Dateien aus) ---
-# Diese Funktionen geben einfach die statischen HTML-Dateien aus dem frontend-Ordner zurück.
+# Diese Routen liefern statische HTML-Dateien an den Browser.
 
 @app.route("/")
 def index():
+    """Startseite: Liefert index.html aus."""
     return send_from_directory(app.static_folder, "index.html")
 
 @app.route("/shop")
 def shop_page():
+    """Shop-Seite: Liefert shop.html aus."""
     return send_from_directory(app.static_folder, "shop.html")
 
 @app.route("/admin")
 def admin_page():
+    """Admin-Seite: Liefert admin.html aus."""
     return send_from_directory(app.static_folder, "admin.html")
 
 # --- API Endpunkte (JSON Backend) ---
@@ -220,6 +246,7 @@ def api_status():
 # Auth: Registrierung
 @app.route("/api/register", methods=["POST"])
 def api_register():
+    """Verarbeitet die Registrierung neuer Benutzer."""
     data = request.json or {}
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
@@ -228,6 +255,7 @@ def api_register():
     city = data.get("city", "")
     postalcode = data.get("postalcode", "")
 
+    # Grundlegende Validierung
     if not email or not password:
         return jsonify({"error": "Email und Passwort benötigt"}), 400
 
@@ -242,11 +270,13 @@ def api_register():
         login_user(user_id) # Direkt einloggen nach Registrierung
         return jsonify({"ok": True, "user_id": user_id})
     except sqlite3.IntegrityError:
+        # Tritt auf, wenn die E-Mail (UNIQUE-Constraint) bereits existiert
         return jsonify({"error": "Email bereits registriert"}), 400
 
 # Auth: Login
 @app.route("/api/login", methods=["POST"])
 def api_login():
+    """Verarbeitet den Benutzer-Login."""
     data = request.json or {}
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
@@ -254,26 +284,30 @@ def api_login():
     if not email or not password:
         return jsonify({"error": "Email und Passwort benötigt"}), 400
 
+    # Holt den User inkl. gehashtem Passwort
     user = query_db("SELECT id,password FROM users WHERE email = ?", (email,), one=True)
     if not user:
         return jsonify({"error": "Ungültige Anmeldedaten"}), 400
 
-    # Passwort-Hash vergleichen
+    # Passwort-Hash vergleichen mit dem eingegebenen Passwort
     if check_password_hash(user["password"], password):
         login_user(user["id"])
         return jsonify({"ok": True})
     else:
+        # Standardfehler, um nicht preiszugeben, ob Email oder Passwort falsch war
         return jsonify({"error": "Ungültige Anmeldedaten"}), 400
 
 # Auth: Logout
 @app.route("/api/logout", methods=["POST"])
 def api_logout():
+    """Verarbeitet den Benutzer-Logout."""
     session.clear() # Session-Cookie leeren
     return jsonify({"ok": True})
 
 # Gibt das Profil des aktuellen Users zurück
 @app.route("/api/me")
 def api_me():
+    """Gibt die Daten des aktuell eingeloggten Benutzers zurück."""
     u = current_user()
     if not u:
         return jsonify({"user": None})
@@ -282,16 +316,18 @@ def api_me():
 # Produkte auflisten
 @app.route("/api/products")
 def api_products():
+    """Gibt eine Liste aller Produkte zurück."""
     rows = query_db("SELECT id,name,description,price_cents,stock FROM products ORDER BY id")
-    products = [dict(r) for r in rows]
+    products = [dict(r) for r in rows] # Konvertiert die Datenbank-Rows in Dictionaries
     return jsonify({"products": products})
 
 # Bestellung aufgeben (benötigt Login)
 @app.route("/api/order", methods=["POST"])
 def api_order():
+    """Erstellt eine neue Bestellung."""
     u = current_user()
     if not u:
-        return jsonify({"error": "Nicht angemeldet"}), 401
+        return jsonify({"error": "Nicht angemeldet"}), 401 # HTTP 401 Unauthorized
 
     data = request.json or {}
     items = data.get("items", [])  # Erwartet Liste: [{product_id, qty}, ...]
@@ -300,14 +336,20 @@ def api_order():
 
     db = get_db()
     cur = db.cursor()
-    total = 0
+    total = 0 # Gesamtsumme der Bestellung in Cent
     
     # 1. Validierung: Prüfen ob Produkte existieren und genug Bestand da ist
     for it in items:
-        pid = int(it.get("product_id"))
-        qty = int(it.get("qty", 0))
+        try:
+            pid = int(it.get("product_id"))
+            qty = int(it.get("qty", 0))
+        except ValueError:
+            return jsonify({"error": "Ungültige Artikel-ID oder Menge"}), 400
+
         if qty <= 0:
             continue
+            
+        # Datenbankabfrage für Produktinformationen
         p = query_db("SELECT id,price_cents,stock FROM products WHERE id = ?", (pid,), one=True)
         if not p:
             return jsonify({"error": f"Produkt {pid} existiert nicht"}), 400
@@ -315,40 +357,48 @@ def api_order():
             return jsonify({"error": f"Nicht genug Lagerbestand für Produkt {pid}"}), 400
         total += p["price_cents"] * qty
 
-    # 2. Bestellung in DB anlegen
+    # 2. Bestellung in DB anlegen (Parent-Eintrag in 'orders')
     cur.execute("INSERT INTO orders (user_id,total_cents) VALUES (?,?)", (u["id"], total))
     order_id = cur.lastrowid
     
-    # 3. Items anlegen und Lagerbestand reduzieren
+    # 3. Items anlegen (Child-Einträge in 'order_items') und Lagerbestand reduzieren
     for it in items:
         pid = int(it.get("product_id"))
         qty = int(it.get("qty", 0))
         if qty <= 0:
             continue
+            
         p = query_db("SELECT price_cents,stock FROM products WHERE id = ?", (pid,), one=True)
+        # Speichert den Preis zum Zeitpunkt der Bestellung (wichtig, falls der Preis später geändert wird)
         cur.execute("INSERT INTO order_items (order_id,product_id,qty,price_cents) VALUES (?,?,?,?)",
                     (order_id, pid, qty, p["price_cents"]))
-        # Bestand verringern
+        
+        # Bestand verringern (Inventur-Update)
         cur.execute("UPDATE products SET stock = stock - ? WHERE id = ?", (qty, pid))
 
-    db.commit()
+    db.commit() # Transaktion abschließen
     return jsonify({"ok": True, "order_id": order_id})
 
 # Admin: Produkt hinzufügen
 @app.route("/api/admin/product", methods=["POST"])
 def api_admin_add_product():
+    """Nur für Administratoren: Fügt ein neues Produkt hinzu."""
     u = current_user()
-    # Nur Admins dürfen diese Route nutzen
+    # Berechtigungsprüfung
     if not u or u.get("is_admin") != 1:
-        return jsonify({"error": "Nicht autorisiert"}), 403
+        return jsonify({"error": "Nicht autorisiert"}), 403 # HTTP 403 Forbidden
+    
     data = request.json or {}
     name = data.get("name")
     desc = data.get("description","")
-    price_cents = int(data.get("price_cents",0))
-    stock = int(data.get("stock",0))
+    try:
+        price_cents = int(data.get("price_cents",0))
+        stock = int(data.get("stock",0))
+    except ValueError:
+        return jsonify({"error": "Preis und Bestand müssen Zahlen sein"}), 400
     
     if not name or price_cents <= 0:
-        return jsonify({"error": "Ungültige Daten"}), 400
+        return jsonify({"error": "Ungültige Daten (Name und positiver Preis benötigt)"}), 400
     
     db = get_db()
     cur = db.cursor()
@@ -360,6 +410,7 @@ def api_admin_add_product():
 # Admin: Produkt löschen
 @app.route("/api/admin/product/<int:product_id>", methods=["DELETE"])
 def api_admin_delete_product(product_id):
+    """Nur für Administratoren: Löscht ein Produkt."""
     u = current_user()
     if not u or u.get("is_admin") != 1:
         return jsonify({"error": "Nicht autorisiert"}), 403
@@ -372,7 +423,7 @@ def api_admin_delete_product(product_id):
     if not p:
         return jsonify({"error": "Produkt nicht gefunden"}), 404
     
-    # Sicherheitscheck: Darf nicht gelöscht werden, wenn es bereits bestellt wurde
+    # Sicherheitscheck: Darf NICHT gelöscht werden, wenn es bereits bestellt wurde (Datenintegrität)
     order_count = query_db(
         "SELECT COUNT(*) as count FROM order_items WHERE product_id = ?", 
         (product_id,), one=True
@@ -380,24 +431,29 @@ def api_admin_delete_product(product_id):
     
     if order_count > 0:
         return jsonify({
-            "error": f"Produkt kann nicht gelöscht werden, da es in {order_count} Bestellung(en) enthalten ist",
+            "error": f"Produkt kann nicht gelöscht werden, da es in {order_count} Bestellung(en) enthalten ist. Archivieren Sie es stattdessen.",
             "order_count": order_count
-        }), 400
+        }), 400 # HTTP 400 Bad Request
     
     # Produkt löschen
     cur.execute("DELETE FROM products WHERE id = ?", (product_id,))
     db.commit()
     
     return jsonify({"ok": True, "message": "Produkt gelöscht"})
+    
 # Admin: Lagerbestand aktualisieren
 @app.route("/api/admin/product/<int:product_id>/stock", methods=["POST"])
 def api_admin_update_stock(product_id):
+    """Nur für Administratoren: Erhöht den Lagerbestand eines Produkts."""
     u = current_user()
     if not u or u.get("is_admin") != 1:
         return jsonify({"error": "Nicht autorisiert"}), 403
     
     data = request.json or {}
-    change = int(data.get("change", 0))
+    try:
+        change = int(data.get("change", 0))
+    except ValueError:
+        return jsonify({"error": "Änderung muss eine Zahl sein"}), 400
     
     if change <= 0:
         return jsonify({"error": "Änderung muss positiv sein"}), 400
@@ -410,15 +466,17 @@ def api_admin_update_stock(product_id):
     if not p:
         return jsonify({"error": "Produkt nicht gefunden"}), 404
     
-    # Neuen Bestand berechnen und speichern
+    # Neuen Bestand berechnen und speichern (atomares Update)
     new_stock = p["stock"] + change
     cur.execute("UPDATE products SET stock = ? WHERE id = ?", (new_stock, product_id))
     db.commit()
     
     return jsonify({"ok": True, "new_stock": new_stock})
-# --- NEU: Admin: Alle Bestellungen abrufen ---
+    
+# Admin: Alle Bestellungen abrufen
 @app.route("/api/admin/orders")
 def api_admin_orders():
+    """Nur für Administratoren: Holt eine Liste aller Bestellungen mit Details."""
     u = current_user()
     if not u or u.get("is_admin") != 1:
         return jsonify({"error": "Nicht autorisiert"}), 403
@@ -426,7 +484,7 @@ def api_admin_orders():
     db = get_db()
     
     # 1. Alle Bestellungen mit User-Infos holen (JOIN)
-    # Wir holen auch Adresse etc. aus der users Tabelle
+    # JOIN verbindet 'orders' und 'users', um Kundendaten direkt zu erhalten
     query = """
         SELECT o.id, o.total_cents, o.created_at,
                u.fullname, u.email, u.address, u.city, u.postalcode
@@ -438,6 +496,8 @@ def api_admin_orders():
     orders = [dict(r) for r in rows]
 
     # 2. Für jede Bestellung die einzelnen Artikel holen (Detailansicht)
+    # Dies ist ein N+1 Problem, das in einer größeren Anwendung optimiert werden sollte, 
+    # aber für SQLite/Testzwecke hier akzeptabel ist.
     for order in orders:
         items_query = """
             SELECT p.name, oi.qty, oi.price_cents
@@ -449,9 +509,12 @@ def api_admin_orders():
         order["items"] = [dict(i) for i in items_rows]
 
     return jsonify({"orders": orders})
+    
 # Statische Dateien (CSS/JS/Bilder) ausliefern, falls URL auf /static/... zeigt
 @app.route("/static/<path:filename>")
 def static_files(filename):
+    """Liefert statische Dateien (z.B. CSS, JS) aus dem Frontend-Ordner aus."""
+    # Berechnet den Pfad zum Frontend-Ordner relativ zum BASE_DIR des Backends
     frontend_root = os.path.join(os.path.dirname(BASE_DIR), "frontend")
     return send_from_directory(frontend_root, filename)
 
@@ -463,7 +526,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if args.init_db:
-        with app.app_context():
+        # Führt die DB-Initialisierung im App-Kontext aus (da Flask-Konfig nötig ist)
+        with app.app_context(): 
             init_db(with_seed=True)
         print("DB initialisiert mit TCM Elektromobilen.")
     else:
