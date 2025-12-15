@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <!-- Zeichensatz & Responsive -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Seitentitel -->
   <title>TCM - Shop</title>
 
   <!-- =========================
-       CSS STYLING
-       ========================= -->
+       GLOBAL STYLES
+  ========================== -->
   <style>
-    /* ===== Grundlayout ===== */
+    /* Grundlayout */
     body {
       margin: 0;
       font-family: sans-serif;
@@ -20,7 +17,9 @@
       color: #e6eef6;
     }
 
-    /* ===== Header ===== */
+    /* =========================
+       HEADER
+    ========================== */
     header {
       display: flex;
       justify-content: space-between;
@@ -51,33 +50,35 @@
       background: #3b82f6;
     }
 
-    /* ===== Hauptbereich ===== */
+    /* =========================
+       MAIN LAYOUT
+    ========================== */
     main {
       display: flex;
-      flex-wrap: wrap;
       gap: 24px;
       padding: 24px;
-      justify-content: center;
+      max-width: 1300px;
+      margin: auto;
     }
 
-    /* ===== Produktliste ===== */
+    /* =========================
+       PRODUCT GRID
+    ========================== */
     #products {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 24px;
       flex: 1;
-      justify-content: flex-start;
     }
 
+    /* Einzelnes Produkt */
     .product {
       background: #111827;
       padding: 16px;
       border-radius: 12px;
-      width: 220px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       transition: 0.2s;
     }
 
@@ -92,14 +93,26 @@
       font-size: 1.1rem;
     }
 
-    .product p {
-      margin: 2px 0;
+    /* Lange Beschreibung → scrollbar */
+    .product .description {
       font-size: 0.9rem;
       color: #cbd5e1;
+      margin-bottom: 8px;
+      max-height: 80px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
-    /* ===== Inputs & Buttons ===== */
-    input[type="number"] {
+    /* Preis */
+    .product .price {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    /* =========================
+       INPUT & BUTTONS
+    ========================== */
+    input[type=number] {
       width: 60px;
       padding: 4px 6px;
       border-radius: 6px;
@@ -107,16 +120,17 @@
       background: #07101a;
       color: #e6eef6;
       text-align: center;
+      margin-bottom: 8px;
     }
 
     button.add-to-cart {
-      margin-top: 8px;
       padding: 8px;
       background: #154a38;
       color: #042035;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 500;
+      border: none;
       transition: 0.2s;
     }
 
@@ -124,13 +138,14 @@
       background: #059669;
     }
 
-    /* ===== Warenkorb ===== */
+    /* =========================
+       CART
+    ========================== */
     #cart {
       background: #111827;
       padding: 20px;
       border-radius: 12px;
       width: 260px;
-      min-height: 220px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
@@ -150,10 +165,8 @@
     #cart-total {
       font-weight: bold;
       margin-top: 12px;
-      font-size: 1rem;
     }
 
-    /* ===== Bestellbutton ===== */
     #btn-order {
       margin-top: 12px;
       width: 100%;
@@ -163,43 +176,48 @@
       border-radius: 8px;
       border: 2px solid #3b82f6;
       cursor: pointer;
-      font-weight: 500;
       transition: 0.2s;
     }
 
     #btn-order:hover {
       background: #3b82f6;
-      border-color: #2563eb;
     }
 
-    /* ===== Footer ===== */
+    /* =========================
+       FOOTER
+    ========================== */
     footer {
       margin-top: 40px;
-      padding-bottom: 20px;
-    }
-
-    .footer {
+      padding: 24px 16px;
       text-align: center;
       color: #888;
-      font-size: 1rem;
+    }
+
+    footer h2 {
+      color: #60a5fa;
+      margin-bottom: 12px;
+    }
+
+    footer p {
       margin: 4px 0;
-      line-height: 1.2;
+      font-size: 0.9rem;
     }
 
-    .footerspace {
-      margin-bottom: 16px;
+    footer .copyright {
+      margin-top: 20px;
+      font-size: 0.75rem;
     }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 800px) {
+    /* =========================
+       RESPONSIVE
+    ========================== */
+    @media (max-width: 900px) {
       main {
         flex-direction: column;
-        align-items: center;
       }
 
       #cart {
         width: 100%;
-        margin-top: 16px;
       }
     }
   </style>
@@ -207,50 +225,46 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-       ========================= -->
+  <!-- HEADER -->
   <header>
     <h1>PiDrive - Elektromobile</h1>
     <button id="btn-logout">Abmelden</button>
   </header>
 
-  <!-- =========================
-       HAUPTBEREICH
-       ========================= -->
+  <!-- MAIN CONTENT -->
   <main>
-    <!-- Produktliste (per JS gefüllt) -->
-    <div id="products"></div>
 
-    <!-- Warenkorb -->
+    <!-- PRODUKTE -->
+    <div id="products">
+      <!-- Produkte werden per JS eingefügt -->
+    </div>
+
+    <!-- WARENKORB -->
     <aside id="cart">
       <h2>Warenkorb</h2>
       <div id="cart-items"></div>
       <div id="cart-total">Total: 0.00 €</div>
       <button id="btn-order">Bestellen (Demo)</button>
     </aside>
+
   </main>
 
-  <!-- =========================
-       FOOTER
-       ========================= -->
+  <!-- FOOTER -->
   <footer>
-    <h2 style="text-align:center; color:#60a5fa;">Kontakt</h2>
-    <p class="footer">E-Mail: kontakt@tcm-shop.com</p>
-    <p class="footer">Telefon: +234 67 911 67 67</p>
-    <p class="footer">TCM-Group</p>
-    <p class="footer">Schwaniweg 67</p>
-    <p class="footer">6767 Steckersee</p>
-    <p class="footer">Nigeria</p>
-    <p class="footerspace"></p>
-    <p style="text-align:center; color:#888; font-size:0.8rem;">
-      © 2025 TCM / Power innovation Drive - Elektromobile. Alle Rechte vorbehalten.
+    <h2>Kontakt</h2>
+    <p>E-Mail: kontakt@tcm-shop.com</p>
+    <p>Telefon: +234 67 911 67 67</p>
+    <p>TCM-Group</p>
+    <p>Schwaniweg 67</p>
+    <p>6767 Steckersee</p>
+    <p>Nigeria</p>
+
+    <p class="copyright">
+      © 2025 TCM / Power Innovation Drive – Elektromobile
     </p>
   </footer>
 
-  <!-- =========================
-       JAVASCRIPT
-       ========================= -->
+  <!-- SCRIPTS -->
   <script src="/static/js/api.js"></script>
   <script src="/static/js/shop.js"></script>
 
