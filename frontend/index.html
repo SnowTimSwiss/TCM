@@ -1,191 +1,236 @@
 <!DOCTYPE html>
+<!-- Definiert die Dokumenttyp-Deklaration und Sprache -->
 <html lang="de">
 <head>
+<!-- Zeichensatz für Umlaute und Sonderzeichen -->
 <meta charset="UTF-8">
+<!-- Für responsive Darstellung auf mobilen Geräten -->
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<!-- Titel der Seite im Browser-Tab -->
 <title>PiDrive Shop - Login / Register</title>
+
+<!-- CSS-Stile für die gesamte Seite -->
 <style>
+  /* Grundlegende Stile für den Body */
   body {
-    margin:0;
-    font-family:sans-serif;
-    background:#0f1720;
-    color:#e6eef6;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    overflow:hidden;
+    margin:0; /* Entfernt Standard-Außenabstand */
+    font-family:sans-serif; /* Einfache Schriftart */
+    background:#0f1720; /* Dunkler Hintergrund */
+    color:#e6eef6; /* Helle Textfarbe */
+    display:flex; /* Flexbox für zentrierte Ausrichtung */
+    justify-content:center; /* Horizontal zentrieren */
+    align-items:center; /* Vertikal zentrieren */
+    height:100vh; /* Volle Viewport-Höhe */
+    overflow:hidden; /* Verhindert Scrollbalken */
   }
 
+  /* Stil für die Hauptkarte/Container */
   .card {
-    background:#111827;
-    padding:30px 40px;
-    border-radius:12px;
-    width:350px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.7);
-    position:relative;
-    z-index:1;
+    background:#111827; /* Dunkler Hintergrund */
+    padding:30px 40px; /* Innenabstand */
+    border-radius:12px; /* Abgerundete Ecken */
+    width:350px; /* Feste Breite */
+    box-shadow:0 6px 18px rgba(0,0,0,0.7); /* Schatten für Tiefe */
+    position:relative; /* Für z-index */
+    z-index:1; /* Über dem Intro-Element */
   }
 
+  /* Hauptüberschrift */
   h1 { 
-    text-align:center; 
-    margin-bottom:20px; 
+    text-align:center; /* Zentrierter Text */
+    margin-bottom:20px; /* Abstand nach unten */
   }
 
+  /* Unterüberschriften */
   h2 { 
-    margin-bottom:10px; 
-    font-size:1.1rem; 
-    color:#60a5fa; 
+    margin-bottom:10px; /* Abstand nach unten */
+    font-size:1.1rem; /* Kleinere Schriftgröße */
+    color:#60a5fa; /* Blaue Akzentfarbe */
   }
 
+  /* Stil für alle Eingabefelder */
   input {
-    width:100%;
-    padding:10px;
-    margin:6px 0;
-    border:none;
-    border-radius:6px;
-    background:#07101a;
-    color:#e6eef6;
-    box-sizing: border-box;
+    width:100%; /* Volle Breite */
+    padding:10px; /* Innenabstand */
+    margin:6px 0; /* Außenabstand oben/unten */
+    border:none; /* Kein Rahmen */
+    border-radius:6px; /* Abgerundete Ecken */
+    background:#07101a; /* Dunkler Hintergrund */
+    color:#e6eef6; /* Helle Textfarbe */
+    box-sizing: border-box; /* Padding in Breite einrechnen */
   }
   
-  /* Roter Rahmen bei Fehler */
+  /* Spezieller Stil für Eingabefelder mit Fehler */
   input.error {
-    border: 1px solid #f87171;
+    border: 1px solid #f87171; /* Rote Rahmenfarbe */
   }
 
-  /* Kompaktere Inputs für Registrieren */
+  /* Kleinere Eingabefelder für Registrierungsformular */
   #register-form input {
-    padding:8px;
-    margin:4px 0;
+    padding:8px; /* Weniger Padding */
+    margin:4px 0; /* Weniger Margin */
   }
 
+  /* Stil für alle Buttons */
   button {
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:6px;
-    background:#60a5fa;
-    color:#042035;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:8px;
+    width:100%; /* Volle Breite */
+    padding:10px; /* Innenabstand */
+    border:none; /* Kein Rahmen */
+    border-radius:6px; /* Abgerundete Ecken */
+    background:#60a5fa; /* Blaue Hintergrundfarbe */
+    color:#042035; /* Dunkle Textfarbe */
+    font-weight:bold; /* Fetter Text */
+    cursor:pointer; /* Zeiger-Cursor bei Hover */
+    margin-top:8px; /* Abstand nach oben */
   }
 
-  button:hover { background:#3b82f6; }
+  /* Hover-Effekt für Buttons */
+  button:hover { background:#3b82f6; } /* Dunkleres Blau */
 
+  /* Stil für Links */
   a { 
-    color:#60a5fa; 
-    cursor:pointer; 
-    text-decoration:none; 
+    color:#60a5fa; /* Blaue Farbe wie Buttons */
+    cursor:pointer; /* Zeiger-Cursor */
+    text-decoration:none; /* Keine Unterstreichung */
   }
-  a:hover { text-decoration:underline; }
+  /* Hover-Effekt für Links */
+  a:hover { text-decoration:underline; } /* Unterstreichung bei Hover */
 
+  /* Statusmeldungs-Container */
   #status {
-    margin-top:10px;
-    text-align:center;
-    min-height: 1.2em;
-    font-size:0.9rem;
+    margin-top:10px; /* Abstand nach oben */
+    text-align:center; /* Zentrierter Text */
+    min-height: 1.2em; /* Minimale Höhe */
+    font-size:0.9rem; /* Kleinere Schriftgröße */
   }
 
-  /* Startanimation */
+  /* Intro-Animation Container */
   #intro { 
-    position:absolute;
-    top:0; left:0;
-    width:100%; height:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#0f1720;
-    z-index:2;
-    color:#60a5fa;
-    font-size:5rem;
-    font-weight:bold;
-    animation: fadeOut 2s ease forwards 1.5s;
+    position:absolute; /* Absolute Positionierung */
+    top:0; left:0; /* Oben links */
+    width:100%; height:100%; /* Volle Bildschirmgröße */
+    display:flex; /* Flexbox für Zentrierung */
+    justify-content:center; /* Horizontal zentrieren */
+    align-items:center; /* Vertikal zentrieren */
+    background:#0f1720; /* Dunkler Hintergrund */
+    z-index:2; /* Über allem anderen */
+    color:#60a5fa; /* Blaue Textfarbe */
+    font-size:5rem; /* Sehr große Schrift */
+    font-weight:bold; /* Fetter Text */
+    animation: fadeOut 2s ease forwards 1.5s; /* Fade-Out Animation */
   }
 
+  /* Keyframes für die Fade-Out Animation */
   @keyframes fadeOut {
     0% {
-      opacity:1;
-      transform: scale(1);
-      visibility:visible;
+      opacity:1; /* Voll sichtbar */
+      transform: scale(1); /* Normale Größe */
+      visibility:visible; /* Sichtbar */
     }
     100% {
-      opacity:0;
-      transform: scale(1.5);
-      visibility:visible;
+      opacity:0; /* Unsichtbar */
+      transform: scale(1.5); /* Vergrößert */
+      visibility:visible; /* Bleibt im DOM */
     }
   }
 </style>
 </head>
 <body>
 
+  <!-- Intro-Animation Element -->
   <div id="intro">PiDrive</div>
 
+  <!-- Haupt-Container für Login/Registrierung -->
   <div class="card">
     <h1>PiDrive - Elektromobile</h1>
 
+    <!-- Login-Formular (initial sichtbar) -->
     <div id="login-form">
      <h2 style="text-align: center;">Anmelden</h2>
+      <!-- Email-Eingabefeld für Login -->
       <input id="login-email" type="email" placeholder="Email" required>
+      <!-- Passwort-Eingabefeld für Login -->
       <input id="login-password" type="password" placeholder="Passwort" required>
+      <!-- Login-Button -->
       <button id="btn-login">Anmelden</button>
+      <!-- Link zum Wechseln zum Registrierungsformular -->
       <p style="text-align:center;">Noch kein Konto? <a id="show-register">Registrieren</a></p>
     </div>
 
+    <!-- Registrierungsformular (initial versteckt) -->
     <div id="register-form" style="display:none;">
       <h2 style="text-align: center;">Registrieren</h2>
+      <!-- Email-Eingabefeld mit Validierung -->
       <input id="reg-email" type="email" placeholder="Email" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Bitte gültige E-Mail eingeben">
+      <!-- Passwort-Eingabefeld mit Mindestlänge -->
       <input id="reg-password" type="password" placeholder="Passwort" required minlength="6">
+      <!-- Vollname-Eingabefeld -->
       <input id="reg-fullname" type="text" placeholder="Vorname Nachname" required>
+      <!-- Adress-Eingabefeld -->
       <input id="reg-address" type="text" placeholder="Strasse und Hausnummer" required>
+      <!-- Stadt-Eingabefeld -->
       <input id="reg-city" type="text" placeholder="Stadt" required>
       
+      <!-- Postleitzahl-Eingabefeld mit Validierung -->
       <input id="reg-postal" type="text" inputmode="numeric" maxlength="4" pattern="^\d{4}$" placeholder="PLZ (4-stellig)" required title="Bitte 4-stellige PLZ eingeben">
       
+      <!-- Registrierungs-Button -->
       <button id="btn-register">Registrieren</button>
+      <!-- Link zum Wechseln zum Login-Formular -->
       <p style="text-align:center;">Schon Kunde? <a id="show-login">Login</a></p>
     </div>
 
+    <!-- Container für Statusmeldungen (Fehler/Erfolg) -->
     <div id="status"></div>
   </div>
 
+<!-- Externe JavaScript-Dateien -->
+<!-- API-Funktionen -->
 <script src="/static/js/api.js"></script>
+<!-- Authentifizierungslogik -->
 <script src="/static/js/auth.js"></script>
 
+<!-- Inline JavaScript für UI-Logik -->
 <script>
-    // --- Initialer Fix für die Animation ---
+    // --- Sicherheits-Timeout für die Intro-Animation ---
+    // Stellt sicher, dass die Animation auch bei Problemen verschwindet
     setTimeout(() => {
         const intro = document.getElementById("intro");
         if (intro) {
-             intro.style.display = "none";
+             intro.style.display = "none"; // Versteckt das Intro-Element
         }
-    }, 3500); 
+    }, 3500); // Nach 3.5 Sekunden
 
-    // --- Umschalt-Logik (UI) ---
+    // --- UI-Umschalt-Logik zwischen Login und Registrierung ---
+    
+    // Referenzen zu den Formularen und Links holen
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const showRegister = document.getElementById('show-register');
     const showLogin = document.getElementById('show-login');
     const statusDiv = document.getElementById('status');
 
+    // Event-Listener für "Registrieren" Link
     showRegister.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'block';
-        statusDiv.innerText = '';
+        e.preventDefault(); // Verhindert Standard-Link-Verhalten
         
-        // Fehler-Klassen entfernen
+        loginForm.style.display = 'none'; // Versteckt Login-Formular
+        registerForm.style.display = 'block'; // Zeigt Registrierungs-Formular
+        statusDiv.innerText = ''; // Löscht Statusmeldungen
+        
+        // Entfernt alle Fehler-Klassen von Registrierungs-Eingabefeldern
         document.querySelectorAll('#register-form input').forEach(input => {
             input.classList.remove('error');
         });
     });
 
+    // Event-Listener für "Login" Link
     showLogin.addEventListener('click', (e) => {
-        e.preventDefault();
-        registerForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        statusDiv.innerText = '';
+        e.preventDefault(); // Verhindert Standard-Link-Verhalten
+        
+        registerForm.style.display = 'none'; // Versteckt Registrierungs-Formular
+        loginForm.style.display = 'block'; // Zeigt Login-Formular
+        statusDiv.innerText = ''; // Löscht Statusmeldungen
     });
 </script>
 
