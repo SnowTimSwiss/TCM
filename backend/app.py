@@ -81,21 +81,91 @@ def init_db(with_seed=True):
 
 def seed_db(db):
     """
-    Füllt die Datenbank mit Beispielprodukten und einem Admin-Benutzer,
+    Füllt die Datenbank mit Elektromobil-Produkten und einem Admin-Benutzer,
     falls diese noch nicht existieren.
     """
     cur = db.cursor()
     # Prüfen, ob Produkte existieren
     cur.execute("SELECT COUNT(*) as c FROM products")
     if cur.fetchone()["c"] == 0:
+        # TCM Elektromobile Produkte
         products = [
-            ("T-Shirt - Demo", "Bequemes Baumwoll-T-Shirt.", 1999, 10),
-            ("Kaffeebecher", "Keramikbecher 300ml.", 899, 25),
-            ("USB-Stick 32GB", "Klein & schnell.", 1299, 5),
-            ("Notizbuch", "A5 liniert", 599, 15),
+            # (name, description, price_cents, stock)
+            (
+                "Elektrofighter Typhoon",
+                "Dieser Jet fliegt so leise, dass er nicht nur die Feinde überrascht – auch der Stromzähler hat keine Chance, mitzuzählen!",
+                67000000,  # 670'000 Euro in Cent
+                5
+            ),
+            (
+                "PorschE 911",
+                "Rennstrecke? Einfach einstecken und loszischen – Ampere inklusive.",
+                18700000,  # 187'000 Euro in Cent
+                8
+            ),
+            (
+                "Vermeiren Mercurius 4D",
+                "Der erste Wagen, der nicht nur die Strasse, sondern auch die Zeit leicht biegt – und dabei völlig emissionsfrei bleibt.",
+                2500000,  # 25'000 Euro in Cent
+                12
+            ),
+            (
+                "Harley d'E vidsons",
+                "Klassisches Harley-Feeling mit Elektro-Kick: knattert nicht mehr, summt nur charmant wie ein Bienenvolk auf Koffein.",
+                2000000,  # 20'000 Euro in Cent
+                15
+            ),
+            (
+                "USS E-Ntreprise",
+                "Leise wie ein Schatten, stark wie ein Blitz – und immer galaktisch stylisch.",
+                5400000000,  # 54'000'000 Euro in Cent
+                2
+            ),
+            (
+                "USS Gerald E Ford",
+                "Modern, mächtig und elektrisch – jetzt können Flugzeugträger auch leise und umweltfreundlich patrouillieren, ohne dass die Fische wegrennen.",
+                9200000000,  # 92'000'000 Euro in Cent
+                1
+            ),
+            (
+                "E-SaturnV",
+                "Die legendäre Rakete mit Elektroantrieb: der Countdown endet, der Blitz startet – und die Erde wird sanft in Richtung Mond geschubst.",
+                10000000000100,  # 100'000'000'001 Euro in Cent
+                1
+            ),
+            (
+                "E-Nuke",
+                "Kleine Elektroschockwelle beim Einschlag",
+                42000000000,  # 420'000'000 Euro in Cent
+                3
+            ),
+            (
+                "E-Rbus 380",
+                "Jumbojet trifft E-Mobilität: so gross, dass selbst die Wolken den Kopf einziehen.",
+                1000000000,  # 10'000'000 Euro in Cent (Platzhalter, da kein Preis angegeben)
+                2
+            ),
+            (
+                "Tupol-Volt 144",
+                "„Abstürze? Nur, wenn du vergisst, ihn wieder aufzuladen!“",
+                2550,  # 25.5 Euro in Cent
+                25
+            ),
+            (
+                "DeLorean DMC-12",
+                "Der DeLorean DMC-12 ist eine ikonische Design-Legende mit Edelstahlkarosserie und Flügeltüren, die als Kultfahrzeug sogar für Zeitreisen steht und futurisches Denken sowie Innovation verkörpert.",
+                100000000000000,  # 1'000'000'000'000 Euro in Cent
+                1
+            ),
+            (
+                "E-Landrover Serie III",
+                "Der bekannte Landrover der Serie III jetzt als Elektrofahrzeug.",
+                6700000,  # 67'000 Euro in Cent
+                7
+            ),
         ]
         cur.executemany("INSERT INTO products (name,description,price_cents,stock) VALUES (?,?,?,?)", products)
-        print("Seeded products.")
+        print("TCM Elektromobile Produkte wurden geladen.")
     
     # Erstellt einen Admin-User (admin@example.com / admin123)
     cur.execute("SELECT COUNT(*) as c FROM users WHERE email = ?", ("admin@example.com",))
@@ -319,7 +389,6 @@ def api_admin_delete_product(product_id):
     db.commit()
     
     return jsonify({"ok": True, "message": "Produkt gelöscht"})
-
 # Admin: Lagerbestand aktualisieren
 @app.route("/api/admin/product/<int:product_id>/stock", methods=["POST"])
 def api_admin_update_stock(product_id):
@@ -347,7 +416,6 @@ def api_admin_update_stock(product_id):
     db.commit()
     
     return jsonify({"ok": True, "new_stock": new_stock})
-
 # --- NEU: Admin: Alle Bestellungen abrufen ---
 @app.route("/api/admin/orders")
 def api_admin_orders():
@@ -381,7 +449,6 @@ def api_admin_orders():
         order["items"] = [dict(i) for i in items_rows]
 
     return jsonify({"orders": orders})
-
 # Statische Dateien (CSS/JS/Bilder) ausliefern, falls URL auf /static/... zeigt
 @app.route("/static/<path:filename>")
 def static_files(filename):
@@ -398,7 +465,7 @@ if __name__ == "__main__":
     if args.init_db:
         with app.app_context():
             init_db(with_seed=True)
-        print("DB initialisiert.")
+        print("DB initialisiert mit TCM Elektromobilen.")
     else:
         # Startet den Webserver
         app.run(host="0.0.0.0", port=5000, debug=app.config["DEBUG"])
